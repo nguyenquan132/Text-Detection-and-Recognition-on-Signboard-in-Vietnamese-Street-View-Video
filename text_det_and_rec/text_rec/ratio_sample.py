@@ -1,3 +1,12 @@
+"""
+Class RatioSampler adapted from the OpenOCR repository.
+Original source: https://github.com/Topdu/OpenOCR.git
+Licensed under the Apache License 2.0.
+Modifications have been made to fit this project.
+Copyright (c) 2023 OpenOCR authors.
+"""
+
+
 import torch
 from torch.utils.data import Sampler
 import numpy as np 

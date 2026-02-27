@@ -317,10 +317,10 @@ if __name__ == '__main__':
     # initialize config
     device = ("cuda" if torch.cuda.is_available() else "cpu")
     config = copy.deepcopy(Config('src/text_rec/svtrv2_smtr_gtc_rctc.yml').cfg)
-    config['Global']['character_dict_path'] = 'vietnamese_charset.txt'
-    config['PostProcess']['character_dict_path'] = 'vietnamese_charset.txt'
-    config['Train']['dataset']['transforms'][2]['GTCLabelEncode']['character_dict_path'] = 'vietnamese_charset.txt'
-    config['Eval']['dataset']['transforms'][1]['GTCLabelEncode']['character_dict_path'] = 'vietnamese_charset.txt'
+    config['Global']['character_dict_path'] = 'charset/vietnamese_charset.txt'
+    config['PostProcess']['character_dict_path'] = 'charset/vietnamese_charset.txt'
+    config['Train']['dataset']['transforms'][2]['GTCLabelEncode']['character_dict_path'] = 'charset/vietnamese_charset.txt'
+    config['Eval']['dataset']['transforms'][1]['GTCLabelEncode']['character_dict_path'] = 'charset/vietnamese_charset.txt'
     config['Train']['dataset']['transforms'][2]['GTCLabelEncode']['max_text_length'] = 25
     config['Eval']['dataset']['transforms'][1]['GTCLabelEncode']['max_text_length'] = 25
     config['Global']['max_text_length'] = 25

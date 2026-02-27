@@ -1,3 +1,11 @@
+"""
+Function get_wh_ratio, resize_norm_img adapted from the OpenOCR repository.
+Original source: https://github.com/Topdu/OpenOCR.git
+Licensed under the Apache License 2.0.
+Modifications have been made to fit this project.
+Copyright (c) 2023 OpenOCR authors.
+"""
+
 import torchvision.transforms.functional as F
 from torchvision import transforms as T
 from torch.utils.data import Dataset
