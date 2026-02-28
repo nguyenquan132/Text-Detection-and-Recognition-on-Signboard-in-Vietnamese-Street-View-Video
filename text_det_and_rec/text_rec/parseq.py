@@ -300,10 +300,10 @@ def test(config, val_ops, best_model_path, device='cpu', seed=42):
 
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-mode', type=str, default='train', required=True, help='')
-    parser.add_argument('-best_model_path', type=str, default=None, required=False, help='')
-    parser.add_argument('-pretrained_model_path', type=str, default=None, required=False, help='')
-    parser.add_argument('-epochs', type=int, default=100, required=False, help='')
+    parser.add_argument('-mode', type=str, default='train', required=False, help='Operation mode: "train" for training the model, "test" for testing the model')
+    parser.add_argument('-best_model_path', type=str, default=None, required=False, help='Path to the best trained model checkpoint to load for testing')
+    parser.add_argument('-pretrained_model_path', type=str, default=None, required=False, help='Path to the pretrained trained model checkpoint to load for training')
+    parser.add_argument('-epochs', type=int, default=100, required=False, help='Number of training epochs')
     # parser.add_argument('-threshold', type=float, default=0.5, required=False, help='')
     args = parser.parse_args()
 
