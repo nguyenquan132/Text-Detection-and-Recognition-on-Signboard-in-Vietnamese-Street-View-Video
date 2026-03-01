@@ -274,7 +274,8 @@ class PARSeqDecoder(nn.Module):
                      memory: Tensor,
                      pos_query: Tensor = None,
                      max_length: Optional[int] = None) -> Tensor:
-        _device = memory.get_device()
+        # _device = memory.get_device()
+        _device = memory.device if hasattr(memory, 'device') else torch.device('cpu')
         testing = max_length is None
         max_length = (self.max_label_length if max_length is None else min(
             max_length, self.max_label_length))
