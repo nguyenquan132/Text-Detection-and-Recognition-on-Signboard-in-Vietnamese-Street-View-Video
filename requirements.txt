@@ -1,12 +1,27 @@
-opencv-python
-tqdm
-# without GPU (If you have GPU, delele --index-url)
---index-url https://download.pytorch.org/whl/cpu
-torch>=1.8.0
-torchvision>=0.9.0,<=0.17.2
+numpy==1.24.2
+unidecode
+# Torch and Torchvision with cuda
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch
+torchvision
+# Ultralytics (YOLO)
 ultralytics
-pandas
-seaborn
-# TextSnake
-easydict
-shapely
+# Transformer Huggingface (DETR, RTDETRv2, SegFormer, Mask2Former)
+transformers
+protobuf==4.25.3
+faster-coco-eval 
+# Convert mask to polygon
+imantics 
+# Apply Perspective Transform
+quadrilateral-fitter
+# gdown
+gdown
+# Preprocessing data
+albumentations
+# Tracking
+supervision
+# OpenOCR
+paddlex
+imgaug
+# calculate paramter, flops
+fvcore
