@@ -156,6 +156,6 @@ After fine-tuning the three sub-tasks, including signboard detection, text detec
 
 > 📌 **Note**: **IC15-TT** denotes a merged subset of **ICDAR2015** and **Total-Text** datasets.
 ## 🎬 Demo
-
+Watch the demo video on YouTube: [Demo Video](https://youtu.be/MAlrAlqD1P8)
 ## 🙏 Acknowledgements
 This project builds upon several excellent open-source projects. We thank the authors for making their code publicly available.
