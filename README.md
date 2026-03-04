@@ -70,6 +70,7 @@ Due to the domain gap between standard object detection datasets and real-world 
 
 ## Text Detection and Recognition
 To optimize the trade-off between **performance** and **inference speed**, we first evaluate multiple pre-trained models on our dataset. Based on this evaluation, we select the best-performing models for fine-tuning. Models are compared across different paradigms: **word-level** vs **line-level detection**, and **one-stage** vs **two-stage** text spotting.
+> 📌 **Note**: **IC15-TT** denotes a merged subset of **ICDAR2015** and **Total-Text** datasets.
 
 ### Pretrained Text Detection Models
 #### Word-Level Evaluation
@@ -102,6 +103,8 @@ To optimize the trade-off between **performance** and **inference speed**, we fi
 | SMTR     | 15.82     | 79.58               | 64.54               | 76.77         | -             | 70.64         | -             | 23.47     | [link](https://github.com/Topdu/OpenOCR/blob/main/README.md) | [link](https://drive.google.com/file/d/16a9scNIaLLlG6Yj7weokXRDo4w9G5qDZ/view) |
 | SVTRv2   | 21.02     | 80.82               | 65.64               | 78.33         | -             | 72.34         | -             | 18.81     | [link](https://github.com/Topdu/OpenOCR/blob/main/README.md) | [link](https://drive.google.com/file/d/1P56B_PVYBF649zUqQFShuAZC1XuNmUcL/view?usp=drive_link) |
 
+> 📌 **Note**: Accuracy (%) is used to evaluate text recognition performance.
+
 ### End-to-End Text Recognition: One-Stage vs Two-Stage
 | Model    | Params(M) | VietSignboard       |                     | IC15-TT       |               | VinText       |               | FPS       | Reference | Link to pretrained model |
 |----------|:---------:|:-------------------:|:-------------------:|:-------------:|:-------------:|:-------------:|:-------------:|:---------:|:---------:|:------------------------:|
@@ -111,6 +114,8 @@ To optimize the trade-off between **performance** and **inference speed**, we fi
 | UNITS           | 101.00    | 63.19               | 9.75                | 88.00         | -             | 64.88         | -             | 1.28 | [link](https://github.com/clovaai/units/blob/main/README.md) | [link](https://drive.google.com/file/d/1c76n9QvysA30q31KMzrDoa7I9bqLuBSa/view?usp=sharing) |
 | DNTextSpotter   | 42.73     | 49.17               | 9.20                | 73.20         | -             | 53.57         | -             | 12.40| [link](https://github.com/yyyyyxie/DNTextSpotter/blob/main/README.md) | [link](https://drive.google.com/file/d/1xwzd0qxIBLIM2rqx_S6_nBSiX-UiIrLa/view?usp=drive_link) |
 | TextPMs + SVTRv2| 57.45     | 66.48               | 9.79                | 68.59         | -             | 68.50         | -             | 10.21| - | - |
+
+> 📌 **Note**: Hmean_e2e (%) is used to evaluate end-to-end text recognition performance.
 
 Based on the experimental results and our evaluation criteria (balancing accuracy and inference speed), we adopt a word-level strategy combined with a two-stage pipeline (text detection + text recognition). Accordingly, we select several promising models that offer optimal accuracy-speed trade-offs for fine-tuning. The following tables present the fine-tuned results of text detection and text recognition models.
 
@@ -130,6 +135,8 @@ Based on the experimental results and our evaluation criteria (balancing accurac
 | PARSeq | 79.19         | 80.26      | 60.68         | 62.11      | 76.95         | 78.67      | [link](https://drive.google.com/file/d/1XkaCFx9NWkf_oAO0yIeTR4gohqEVa1of/view?usp=drive_link) |
 | SMTR   | 77.40         | 78.47      | 59.64         | 61.07      | 75.06         | 76.58      | [link](https://drive.google.com/file/d/1ondg31F3aoGyATP7ttwxO0IdEjzKYMBw/view?usp=drive_link) |
 | SVTRv2 | 76.39         | 77.96      | 57.55         | 58.59      | 76.46         | 78.10      | [link](https://drive.google.com/file/d/19xqFaw_acEIeEBBlGRH_ecxaF4zQVtW2/view?usp=drive_link) |
+
+> 📌 **Note**: Accuracy (%) is used to evaluate text recognition performance.
 
 ## 🔗 End-to-End Pipeline
 After fine-tuning the three sub-tasks, including signboard detection, text detection, and text recognition, we combine the best-performing models from each component to construct several candidate pipelines. We then evaluate these pipelines in an end-to-end setting to identify the most effective configuration for signboard text extraction. The following tables present the performance of different pipeline combinations on the VietSignboard, IC15-TT, and VinText datasets.
@@ -152,7 +159,8 @@ After fine-tuning the three sub-tasks, including signboard detection, text detec
 | YOLOv11-OBB + Align | YOLOv8-OBB | PARSeq | 70.46 | 71.43 | 41.69 | 42.70 | 68.32 | 70.02 | 
 | SegFormer + Align | YOLOv8-OBB | PARSeq | 70.25 | 71.19 | 44.80 | 46.02 | 70.12 | 71.65 | 
 
-> 📌 **Note**: **IC15-TT** denotes a merged subset of **ICDAR2015** and **Total-Text** datasets.
+> 📌 **Note**: Hmean_e2e (%) is used to evaluate end-to-end pipeline.
+
 ## 🎬 Demo
 Watch the demo video on YouTube: [Demo Video](https://youtu.be/MAlrAlqD1P8)
 ## 📚 Report
