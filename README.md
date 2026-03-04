@@ -19,9 +19,7 @@ This project addresses the problem of detecting and recognizing signboard text i
 </p>
 
 ## 📊 Dataset
-Please refer to the official dataset repository for details about the dataset structure and instructions on how to request and download the dataset:
-
-[Dataset](https://github.com/aiclub-uit/SignboardText/blob/main/README.md)
+Please refer to the official dataset repository for details about the dataset structure and instructions on how to request and download the dataset: [Dataset](https://github.com/aiclub-uit/SignboardText/blob/main/README.md)
 
 ## ⚙️ Installation
 First, create a virtual environment using Conda:
@@ -157,5 +155,7 @@ After fine-tuning the three sub-tasks, including signboard detection, text detec
 > 📌 **Note**: **IC15-TT** denotes a merged subset of **ICDAR2015** and **Total-Text** datasets.
 ## 🎬 Demo
 Watch the demo video on YouTube: [Demo Video](https://youtu.be/MAlrAlqD1P8)
+## 📚 Report
+For a comprehensive description of the methodology, experimental setup, and detailed analysis of results, please refer to the full project report: [Project Report](report/22521184_22521074_KLTN.pdf)
 ## 🙏 Acknowledgements
 This project builds upon several excellent open-source projects. We thank the authors for making their code publicly available.
