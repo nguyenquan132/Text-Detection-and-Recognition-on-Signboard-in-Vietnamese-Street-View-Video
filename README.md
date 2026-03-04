@@ -159,7 +159,7 @@ After fine-tuning the three sub-tasks, including signboard detection, text detec
 | YOLOv11-OBB + Align | YOLOv8-OBB | PARSeq | 70.46 | 71.43 | 41.69 | 42.70 | 68.32 | 70.02 | 
 | SegFormer + Align | YOLOv8-OBB | PARSeq | 70.25 | 71.19 | 44.80 | 46.02 | 70.12 | 71.65 | 
 
-> 📌 **Note**: Hmean_e2e (%) is used to evaluate end-to-end pipeline.
+> 📌 **Note**: Hmean_e2e (%) is used to evaluate end-to-end text recognition performance on signboards.
 
 ## 🎬 Demo
 Watch the demo video on YouTube: [Demo Video](https://youtu.be/MAlrAlqD1P8)
