@@ -3,12 +3,24 @@ Text Detection and Recognition on Signboard in Vietnamese Street-View Video
 </h1>
 
 <p align="center">
+<a href="https://www.python.org/">
 <img src="https://img.shields.io/badge/Python-3.10-blue">
+</a>
+<a href="https://lightning.ai/">
 <img src="https://img.shields.io/badge/PyTorch-Lightning-red">
+</a>
+<a href="https://huggingface.co/">
 <img src="https://img.shields.io/badge/HuggingFace-Transformers-yellow">
+</a>
+<a href="https://github.com/ultralytics/ultralytics">
 <img src="https://img.shields.io/badge/Ultralytics-YOLO-orange">
+</a>
+<a href="https://github.com/Topdu/OpenOCR">
 <img src="https://img.shields.io/badge/OpenOCR-Toolkit-green">
+</a>
+<a href="https://wandb.ai/">
 <img src="https://img.shields.io/badge/Weights&Biases-ExperimentTracking-purple">
+</a>
 </p>
 
 This project addresses the problem of detecting and recognizing signboard text in urban street-view images and videos, with a focus on Vietnamese environments. Signboard text often contains important semantic information such as business names and service types, which can support applications like urban business analysis and intelligent navigation. However, this task is challenging due to complex backgrounds, diverse signboard layouts, motion blur in dashcam videos, and the presence of Vietnamese diacritics. To tackle these challenges, this work builds an **end-to-end pipeline** consisting of three stages: signboard detection, text detection, and text recognition. The pipeline integrates **RT-DETRv2** for signboard detection, **YOLOv8-OBB** for oriented text detection, and **PARSeq** for text recognition. Experiments are conducted on an extended SignboardText dataset, with evaluation focused on Vietnamese street scenarios. The proposed pipeline achieves an Hmean of **89.64%** on **VietSignboard** and **89.79%** on **VinText** for text detection, and end-to-end recognition Hmean scores of **72.32%** and **72.23%**, respectively. These results demonstrate the effectiveness of the proposed pipeline and provide a practical baseline for urban text information extraction from street-view images and videos.
