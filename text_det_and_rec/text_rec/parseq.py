@@ -1,19 +1,21 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import torch
 import pytorch_lightning as pl 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
-from src.text_rec.OpenOCR.tools.engine.config import Config
-from src.text_rec.OpenOCR.openrec.optimizer import build_optimizer
-from src.text_rec.OpenOCR.openrec.preprocess import transform
-from src.text_rec.OpenOCR.openrec.preprocess import create_operators
-from src.text_rec.OpenOCR.openrec.modeling.base_recognizer import BaseRecognizer
-from src.text_rec.OpenOCR.openrec.modeling import build_model
-from src.text_rec.OpenOCR.openrec.postprocess import build_post_process
-from src.text_rec.OpenOCR.openrec.losses import build_loss
-from ratio_sample import RatioSampler
-from dataset import SignboardText
+from OpenOCR.tools.engine.config import Config
+from OpenOCR.openrec.optimizer import build_optimizer
+from OpenOCR.openrec.preprocess import transform
+from OpenOCR.openrec.preprocess import create_operators
+from OpenOCR.openrec.modeling.base_recognizer import BaseRecognizer
+from OpenOCR.openrec.postprocess import build_post_process
+from OpenOCR.openrec.losses import build_loss
+from OpenOCR.data.ratio_sample import RatioSampler
+from .dataset import SignboardText
 from utils import set_seed
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -23,7 +25,6 @@ import argparse
 import numpy as np
 import copy
 import warnings
-import os
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 os.environ["WANDB_API_KEY"] = "YOUR API KEY"
 
@@ -331,7 +332,7 @@ if __name__ == '__main__':
 
     if args.mode == 'train': 
         pretrained_model_path = args.pretrained_model_path
-        max_epochs = args.max_epochs
+        max_epochs = args.epochs
         assert pretrained_model_path is not None
         train(config, train_ops, val_ops, pretrained_model_path=pretrained_model_path, 
               max_epochs=max_epochs, device=device)
