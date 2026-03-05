@@ -96,14 +96,14 @@ To optimize the trade-off between **performance** and **inference speed**, we fi
 | KPN     | 58.24     | 81.19            | 81,85  | 81.52  | 63.49       | 85.90  | 73.01  | 83.49       | 78.37  | 80.85  | 4.17 | [link](https://github.com/GXYM/KPN/blob/main/README.md) | [link](https://drive.google.com/file/d/1WvJUTggqYXBkKtu3vSvIJQ_A7b7ZYER9/view) |
 
 #### Line-Level Evaluation
-| Models  | Params(M) | **Vietsignboad** |        |        |
-|---------|:---------:|:----------------:|:------:|:------:|
-|         |           | Precision        | Recall | H-mean |
-| PANet   | 21.68     | 74.62            | 33.60  |        |
-| DBNet++ | 22.14     | 70.54            | 33.70  |        |
-| TextPMs | 22.84     | 75.27            | 35.04  |        |
-| FAST    | 21.91     | 79.92            | 34.39  |        |
-| KPN     | 25.23     | 78.48            | 38.18  |        |
+| Models  | **Vietsignboad** |          |        |
+|---------|:----------------:|:--------:|:------:|
+|         | Precision        | Recall   | H-mean |
+| PANet   | 21.68            | 74.62    | 33.60  | 
+| DBNet++ | 22.14            | 70.54    | 33.70  | 
+| TextPMs | 22.84            | 75.27    | 35.04  |
+| FAST    | 21.91            | 79.92    | 34.39  | 
+| KPN     | 25.23            | 78.48    | 38.18  | 
 
 ### Pretrained Text Recognition Models
 | Model    | Params(M) | VietSignboard       |                     | IC15-TT       |               | VinText       |               | Speed(ms) | Reference | Link to pretrained model |
