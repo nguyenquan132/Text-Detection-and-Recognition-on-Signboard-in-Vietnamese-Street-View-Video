@@ -1,14 +1,14 @@
 """
-    Functions sigmoid_alpha and make_text_region are adapted from:
-    TextPMs repository:
-    https://github.com/GXYM/TextPMs.git
-    MIT License - Copyright (c) 2020
-    Implements: Zhang et al., IEEE TPAMI 2023
+The functions `sigmoid_alpha` and `make_text_region` are adapted from: 
+TextPMs repository: https://github.com/GXYM/TextPMs.git
+MIT License
+Copyright (c) 2022 TextPMs authors
 
-    Class MakeBorderMap, MakeShrinkMap and Functions shrink_polygon_py, shrink_polygon_pyclipper are adapted from:
-    PaddleOCR2Pytorch repository:
-    https://github.com/frotms/PaddleOCR2Pytorch.git
-    Licensed under the Apache License 2.0.
+The classes `MakeBorderMap`, `MakeShrinkMap` and the functions
+`shrink_polygon_py`, `shrink_polygon_pyclipper` are adapted from:
+PaddleOCR2Pytorch repository: https://github.com/frotms/PaddleOCR2Pytorch.git
+Licensed under the Apache License 2.0.
+Copyright (c) 2021 PaddleOCR2Pytorch authors
 """
 
 import torch
@@ -22,6 +22,7 @@ import numpy as np
 from src.text_det.TextPMs.dataset.dataload import TextInstance
 import pyclipper
 from shapely.geometry import Polygon
+from utils import check_and_refine_valid_box
 
 def sigmoid_alpha(x, k):
     betak = (1 + np.exp(-k)) / (1 - np.exp(-k))

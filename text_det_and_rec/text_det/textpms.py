@@ -1,3 +1,10 @@
+"""
+The functions `data_transfer_ICDAR`, `fill hole`, and `watershed_segment` are adapted from: 
+TextPMs repository: https://github.com/GXYM/TextPMs.git
+MIT License
+Copyright (c) 2022 TextPMs authors
+"""
+
 import torch
 import pytorch_lightning as pl 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping

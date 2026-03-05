@@ -1,3 +1,11 @@
+"""
+The PolynomialDecayLR scheduler is adapted from PaddleOCR and reimplemented in PyTorch.
+The loss functions (BalanceCrossEntropyLoss, DiceLoss, MaskL1Loss, and DBLoss) are adapted from: 
+DBNet repository: https://github.com/WenmuZhou/DBNet.pytorch.git
+Licensed under the Apache License 2.0.
+Modifications have been made to fit this project.
+Copyright (c) 2019 DBNet authors
+"""
 import torch
 import pytorch_lightning as pl 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
