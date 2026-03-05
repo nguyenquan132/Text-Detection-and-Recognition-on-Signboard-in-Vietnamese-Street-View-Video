@@ -366,4 +366,16 @@ def merge_polygons(polygons, merge_map):
 
     return final_polygons
 
-
+def data_transfer_ICDAR(contours):
+    cnts = list()
+    for cont in contours:
+        rect = cv2.minAreaRect(cont)
+        if min(rect[1][0], rect[1][1]) <=8 :
+            continue
+        #rect=(rect[0],(rect[1][0]-3, rect[1][1]-3), rect[2])
+        points = cv2.boxPoints(rect)
+        points = np.int0(points)
+        # print(points.shape)
+        # points = np.reshape(points, (4, 2))
+        cnts.append(points)
+    return cnts

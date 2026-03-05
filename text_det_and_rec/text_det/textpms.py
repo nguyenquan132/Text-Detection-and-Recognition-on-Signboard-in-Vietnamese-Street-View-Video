@@ -1,10 +1,3 @@
-"""
-The functions `data_transfer_ICDAR`, `fill hole`, and `watershed_segment` are adapted from: 
-TextPMs repository: https://github.com/GXYM/TextPMs.git
-MIT License
-Copyright (c) 2022 TextPMs authors
-"""
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -18,6 +11,7 @@ from TextPMs.util.config import config, update_config
 from TextPMs.util.option import BaseOptions
 from TextPMs.util.augmentation import BaseTransform, Augmentation
 from TextPMs.util.detection import watershed_segment
+from TextPMs.util.misc import data_transfer_ICDAR
 from TextPMs.network.textnet import TextNet
 from TextPMs.network.loss import TextLoss
 from .dataset import SignboardText
@@ -30,20 +24,6 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 os.environ["WANDB_API_KEY"] = "YOUR API KEY"
-
-def data_transfer_ICDAR(contours):
-    cnts = list()
-    for cont in contours:
-        rect = cv2.minAreaRect(cont)
-        if min(rect[1][0], rect[1][1]) <=8 :
-            continue
-        #rect=(rect[0],(rect[1][0]-3, rect[1][1]-3), rect[2])
-        points = cv2.boxPoints(rect)
-        points = np.int0(points)
-        # print(points.shape)
-        # points = np.reshape(points, (4, 2))
-        cnts.append(points)
-    return cnts
 
 def collate_fn(batch): 
     result = {
