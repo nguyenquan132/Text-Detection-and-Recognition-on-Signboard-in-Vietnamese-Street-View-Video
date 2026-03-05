@@ -5,26 +5,28 @@ MIT License
 Copyright (c) 2022 TextPMs authors
 """
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import torch
 import pytorch_lightning as pl 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
-from src.text_det.TextPMs.util.config import config, update_config
-from src.text_det.TextPMs.util.option import BaseOptions
-from src.text_det.TextPMs.util.augmentation import BaseTransform, Augmentation
-from src.text_det.TextPMs.network.textnet import TextNet
-from src.text_det.TextPMs.network.loss import TextLoss
+from TextPMs.util.config import config, update_config
+from TextPMs.util.option import BaseOptions
+from TextPMs.util.augmentation import BaseTransform, Augmentation
+from TextPMs.util.detection import watershed_segment
+from TextPMs.network.textnet import TextNet
+from TextPMs.network.loss import TextLoss
+from .dataset import SignboardText
 import argparse
-from dataset import SignboardText
 from torch.utils.data import DataLoader
 from utils import set_seed, rescale_box, save_output_txt, prepare_file_to_evaluate
-from skimage import segmentation
 import numpy as np
 import cv2
 from tqdm import tqdm
-import os
 import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 os.environ["WANDB_API_KEY"] = "YOUR API KEY"
@@ -59,48 +61,6 @@ def collate_fn(batch):
         result['train_mask'] = torch.stack([b['train_mask'] for b in batch])
     
     return result
-
-def fill_hole(input_mask):
-    h, w = input_mask.shape
-    canvas = np.zeros((h + 2, w + 2), np.uint8)
-    canvas[1:h + 1, 1:w + 1] = input_mask.copy()
-
-    mask = np.zeros((h + 4, w + 4), np.uint8)
-
-    cv2.floodFill(canvas, mask, (0, 0), 1)
-    canvas = canvas[1:h + 1, 1:w + 1].astype(np.bool)
-
-    return (~canvas | input_mask.astype(np.uint8))
-
-def watershed_segment(preds, cfg, scale=1.0):
-    text_region = np.mean(preds[2:], axis=0)
-    region = fill_hole(text_region >= cfg.threshold)
-
-    text_kernal = np.mean(preds[0:2], axis=0)
-    kernal = fill_hole(text_kernal >= cfg.threshold)
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    opening = cv2.morphologyEx(kernal, cv2.MORPH_OPEN, kernel, iterations=1)
-    kernal = cv2.erode(opening, kernel, iterations=1)  # sure foreground area
-    ret, m = cv2.connectedComponents(kernal)
-
-    distance = np.mean(preds[:], axis=0)
-    distance = np.array(distance / np.max(distance) * 255, dtype=np.uint8)
-    labels = segmentation.watershed(-distance, m, mask=region)
-    boxes = []
-    contours = []
-    small_area = (300 if cfg.test_size[0] >= 256 else 150)
-    for idx in range(1, np.max(labels) + 1):
-        text_mask = labels == idx
-        if np.sum(text_mask) < small_area / (cfg.scale * cfg.scale) \
-                or np.mean(preds[-1][text_mask]) < cfg.score_i:  # 150 / 300
-            continue
-        cont, _ = cv2.findContours(text_mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        epsilon = 0.003 * cv2.arcLength(cont[0], True)
-        approx = cv2.approxPolyDP(cont[0], epsilon, True)
-        contours.append(approx.reshape((-1, 2)) * [scale, scale])
-
-    return labels, boxes, contours
 
 class TextPMsFinetuner(pl.LightningModule):
     def __init__(self, model, criterion=None, lr=None, train_dataloader=None, val_dataloader=None,
