@@ -38,6 +38,15 @@ def parse_yaml(config_file):
 
     return cfg
 
+def calculate_font_scale(image, base_scale=9e-4):
+    height, width = image.shape[:2]
+    diagonal = (width**2 + height**2)**0.5
+    return max(diagonal * base_scale, 0.5) 
+
+def create_folder(folder): 
+    if not Path(folder).is_dir():
+        Path(folder).mkdir(parents=True, exist_ok=True)
+
 def overlay(image, mask, color, alpha, resize=None):
     """Combines image and its segmentation mask into a single image.
     https://www.kaggle.com/code/purplejester/showing-samples-with-segmentation-mask-overlay
@@ -197,6 +206,81 @@ def draw_bounding_box(image, boxes, class_id=None, confidence=None, box_thicknes
                 fontScale=text_scale, color=text_color, thickness=text_thickness, lineType=cv2.LINE_AA)
     return image
 
+def rescale_box(current_size, target_size, boxes=None):
+    """
+    Args: 
+        current_size: (width, height)
+        target_size: (width, height)
+    Returns:
+        boxes rescaled to original image
+    """
+    target_width, target_height = target_size
+    current_width, current_height = current_size
+    ratio = [target_width / current_width, target_height / current_height]
+
+    if boxes is not None: 
+        boxes = [np.round(box * ratio).astype(np.int32) for box in boxes] 
+
+    return boxes
+
+def scale_boxes(img1_shape, boxes, img0_shape, ratio_pad=None, padding: bool = True, xywh: bool = False):
+    """ 
+    Copied from the Ultralytics YOLO repository
+    Source: https://github.com/ultralytics/ultralytics.git
+    Copyright (c) Ultralytics
+    Licensed under the GNU AGPL-3.0 License
+    """
+
+    """
+    Rescale bounding boxes from one image shape to another.
+
+    Rescales bounding boxes from img1_shape to img0_shape, accounting for padding and aspect ratio changes.
+    Supports both xyxy and xywh box formats.
+
+    Args:
+        img1_shape (tuple): Shape of the source image (height, width).
+        boxes (torch.Tensor): Bounding boxes to rescale in format (N, 4).
+        img0_shape (tuple): Shape of the target image (height, width).
+        ratio_pad (tuple, optional): Tuple of (ratio, pad) for scaling. If None, calculated from image shapes.
+        padding (bool): Whether boxes are based on YOLO-style augmented images with padding.
+        xywh (bool): Whether box format is xywh (True) or xyxy (False).
+
+    Returns:
+        (torch.Tensor): Rescaled bounding boxes in the same format as input.
+    """
+    if ratio_pad is None:  # calculate from img0_shape
+        gain = min(img1_shape[0] / img0_shape[0], img1_shape[1] / img0_shape[1])  # gain  = old / new
+        pad_x = round((img1_shape[1] - img0_shape[1] * gain) / 2 - 0.1)
+        pad_y = round((img1_shape[0] - img0_shape[0] * gain) / 2 - 0.1)
+    else:
+        gain = ratio_pad[0][0]
+        pad_x, pad_y = ratio_pad[1]
+
+    if padding:
+        boxes[..., 0] -= pad_x  # x padding
+        boxes[..., 1] -= pad_y  # y padding
+        if not xywh:
+            boxes[..., 2] -= pad_x  # x padding
+            boxes[..., 3] -= pad_y  # y padding
+    boxes[..., :4] /= gain
+    return boxes
+
+def filter_bboxes(outputs, current_size, target_size, threshold=0.25): 
+    scores, labels, bboxes = outputs['scores'], outputs['labels'], outputs['boxes']
+    keep = scores > threshold 
+
+    scores_keep = scores[keep]
+    labels_keep = labels[keep]
+    bboxes = bboxes[keep]
+
+    if target_size is not None: 
+        assert len(target_size) == 2 #(H, W)
+        # Rescale resized box to original box
+        bboxes = scale_boxes(current_size, bboxes, target_size)
+
+    return {'scores': scores_keep, 'labels': labels_keep, 'bboxes': bboxes}
+
+
 def check_and_refine_valid_box(box, image_size, min_width, min_height, box_format='xywh'):
     """
     if box contains the negative value, this function will convert the negative value to 0 value.
@@ -341,32 +425,6 @@ def transform_boxes_back(boxes, M_inv):
         transformed = cv2.perspectiveTransform(box_np, M_inv)
         boxes_original.append(transformed.reshape(-1, 2))
     return boxes_original
-
-def calculate_font_scale(image, base_scale=9e-4):
-    height, width = image.shape[:2]
-    diagonal = (width**2 + height**2)**0.5
-    return max(diagonal * base_scale, 0.5) 
-
-def create_folder(folder): 
-    if not Path(folder).is_dir():
-        Path(folder).mkdir(parents=True, exist_ok=True)
-
-def rescale_box(current_size, target_size, boxes=None):
-    """
-    Args: 
-        current_size: (width, height)
-        target_size: (width, height)
-    Returns:
-        boxes rescaled to original image
-    """
-    target_width, target_height = target_size
-    current_width, current_height = current_size
-    ratio = [target_width / current_width, target_height / current_height]
-
-    if boxes is not None: 
-        boxes = [np.round(box * ratio).astype(np.int32) for box in boxes] 
-
-    return boxes
 
 def save_output_txt(file_name, polygons, save_folder,
                     pred_transcriptions=None, boxes=None): 
