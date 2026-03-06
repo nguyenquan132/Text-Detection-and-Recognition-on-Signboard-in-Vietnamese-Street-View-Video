@@ -52,7 +52,7 @@ Initial experiments were conducted on **Kaggle notebooks** with GPU acceleration
 Example command for training the RT-DETRv2 signboard detection model:
 
 ```bash
-python3 signboard_det/rtdetr_v2.py -mode train -epochs 100 -size 640
+python3 -m signboard_det.rtdetrv2 -mode train -epochs 100 -size 640
 ```
 > 💡 To enable experiment tracking, set your WANDB_API_KEY before running the training script.
 
