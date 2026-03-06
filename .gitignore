@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+myvenv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# PyTorch / Lightning
+lightning_logs/
+*.ckpt
+*.pt
+*.pth
+
+# Experiment tracking
+wandb/
+
+# Tensorboard
+runs/
+events.out.tfevents*
+
+# Dataset
+data/
+dataset/
+datasets/
+*.zip
+*.tar
+*.gz
+
+# Model checkpoints
+checkpoints/
+models/
+
+# Logs
+logs/
+*.log
+
+# Kaggle
+kaggle.json
+
+# Temp
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.env
+config/local.yaml
