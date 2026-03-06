@@ -1,30 +1,33 @@
 unidecode
-# Torch and Torchvision with cuda
+# Core numerical
+numpy>=1.26,<2.0
+# Torch
 --extra-index-url https://download.pytorch.org/whl/cu121
 torch
 torchvision
 pytorch-lightning
-# Transformer Huggingface (DETR, RTDETRv2, SegFormer, Mask2Former)
+# Huggingface
 transformers
 protobuf==4.25.3
-faster-coco-eval 
-# Ultralytics (YOLO)
-numpy==1.24.2
+faster-coco-eval
+# Vision
+opencv-python==4.8.1.78
+pillow==10.2.0
+scikit-image
+# YOLO
 ultralytics
-# Convert mask to polygon
-imantics 
-# Apply Perspective Transform
+# Geometry
+imantics
 quadrilateral-fitter
-# gdown
+pyclipper
+# Download
 gdown
-# Preprocessing data
+# Augmentation
 albumentations
+imgaug==0.4.0
 # Tracking
 supervision
-# OpenOCR
+# OCR
 paddlex
-imgaug
-# calculate paramter, flops
+# FLOPs
 fvcore
-# Image processing
-scikit-image
