@@ -1,12 +1,12 @@
 from transformers import RTDetrV2ForObjectDetection, RTDetrImageProcessor
-from src.signboard_det.rtdetr.rtdetrv2_pytorch.src.nn.postprocessor.detr_postprocessor import DetDETRPostProcessor
+from signboard_det.RTDETRv2.nn.postprocessor.detr_postprocessor import DetDETRPostProcessor
 import torch
 import torchvision.transforms.functional as F
 from torch.nn import functional
-from utils import get_state_dict
+from utils.utility import get_state_dict
 import numpy as np
 from PIL import Image
-from signboard_det.rtdetr_v2 import Transforms
+from signboard_det.rtdetrv2 import Transforms
 
 class RTDETRV2(object):
     def __init__(self, id2label, checkpoint_path, device='cpu', threshold=0.5):

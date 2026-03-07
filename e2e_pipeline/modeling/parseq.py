@@ -1,6 +1,9 @@
-from src.text_rec.OpenOCR.tools.engine.config import Config
-from src.text_rec.OpenOCR.openrec.modeling.base_recognizer import BaseRecognizer
-from src.text_rec.OpenOCR.openrec.postprocess import build_post_process
+"""
+The functions resize_norm_img are adapted from OpenOCR
+"""
+from text_spotting.recognition.OpenOCR.tools.engine.config import Config
+from text_spotting.recognition.OpenOCR.openrec.modeling.base_recognizer import BaseRecognizer
+from text_spotting.recognition.OpenOCR.openrec.postprocess import build_post_process
 from torchvision import transforms as T
 import torchvision.transforms.functional as F
 import torch
@@ -9,7 +12,7 @@ from PIL import Image
 import random
 import copy
 import numpy as np
-from utils import get_state_dict
+from utils.utility import get_state_dict
 
 class RecTransform(object):
     def __init__(self, padding=False): 

@@ -1,6 +1,4 @@
-from .rtdetr_v2 import RTDETRV2
-from .yolov8_obb_text import YOLOv8_OBB
-from .parseq import PARSeq
+from e2e_pipeline.modeling import RTDETRV2, YOLOv8_OBB, PARSeq
 from .pipeline import TextSpottingonSignboard, TextSpottingonSignboardVideo
 
 def build_pipeline(device, checkpoint_signboard_det=None, checkpoint_text_det=None, 

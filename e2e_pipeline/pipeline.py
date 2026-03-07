@@ -4,8 +4,9 @@ import cv2
 import supervision as sv
 from collections import defaultdict
 from quadrilateral_fitter import QuadrilateralFitter
-from .visualizer import TextVisualizer
-from utils import check_and_refine_valid_box, draw_bounding_box, smart_crop_or_align, transform_boxes_back, draw_polygon
+from utils.visualize import TextVisualizer, draw_bounding_box, draw_polygon
+from utils.transforms import check_and_refine_valid_box
+from utils.geometry import smart_crop_or_align, transform_boxes_back
 
 class TextSpottingonSignboardVideo(object): 
     def __init__(self, model_det_signboard, model_det_text, model_rec_text):

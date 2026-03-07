@@ -3,7 +3,7 @@ import albumentations as A
 from imantics import Polygons, Mask
 import torch
 import numpy as np
-from utils import get_state_dict
+from utils.utility import get_state_dict
 
 class Transforms(object): 
     def __init__(self, size): 
