@@ -40,6 +40,10 @@ def infer_video(video_path, pipeline):
             break # No more frame
 
         t = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+        # skip frame if video is large
+        if frame_idx % skip != 0: 
+            frame_idx += 1 
+            continue
 
         # Inference
         new_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
