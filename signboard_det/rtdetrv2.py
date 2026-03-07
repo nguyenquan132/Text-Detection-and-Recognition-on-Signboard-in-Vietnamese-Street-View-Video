@@ -20,7 +20,8 @@ from .metrics import bounding_boxes, calculate_mAP
 from .infer import inference
 from signboard_det.evaluation.BoundingBoxes import BoundingBoxes
 from signboard_det.evaluation.Evaluator import *
-from utils import set_seed, filter_bboxes
+from utils.utility import set_seed
+from utils.transforms import filter_bboxes
 import albumentations as A
 from PIL import Image
 import numpy as np

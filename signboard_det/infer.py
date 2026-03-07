@@ -1,4 +1,5 @@
-from utils import draw_bounding_box, calculate_font_scale
+from utils.visualize import draw_bounding_box
+from utils.utility import calculate_font_scale
 import cv2
 
 def plot_image(show_image, results):

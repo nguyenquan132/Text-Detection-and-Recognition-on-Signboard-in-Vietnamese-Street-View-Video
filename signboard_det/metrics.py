@@ -1,6 +1,6 @@
 from signboard_det.evaluation.BoundingBox import BoundingBox
 from signboard_det.evaluation.Evaluator import *
-from utils import convert_box_format, denormalize
+from utils.transforms import convert_box_format, denormalize
 import torch
 import time
 from fvcore.nn import FlopCountAnalysis, parameter_count

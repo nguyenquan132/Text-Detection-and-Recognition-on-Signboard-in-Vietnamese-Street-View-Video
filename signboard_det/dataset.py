@@ -6,7 +6,7 @@ import json
 import cv2
 import torch
 import numpy as np
-from utils import convert_box_format
+from utils.transforms import convert_box_format
 
 class SignboardDetection(Dataset):
     def __init__(self, rootDir, label, label2id, transforms=None):

@@ -9,7 +9,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from transformers import SegformerForSemanticSegmentation, SegformerFeatureExtractor, get_cosine_schedule_with_warmup
 from .dataset import SignboardSegmentation
-from utils import set_seed
+from utils.utility import set_seed
 from PIL import Image
 import evaluate 
 import numpy as np
