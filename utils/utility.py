@@ -32,9 +32,17 @@ def get_state_dict(state_dict, idx):
 
     return new_state_dict
 
-def parse_yaml(config_file): 
-    with open(config_file, 'r') as f: 
-        cfg = yaml.load(f, yaml.SafeLoader)
+def parse_yaml(config_file):
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(f"Config file not found: {config_file}")
+
+    try:
+        with open(config_file, "r") as f:
+            cfg = yaml.load(f, Loader=yaml.SafeLoader)
+    except yaml.YAMLError as e:
+        raise ValueError(f"Error parsing YAML file {config_file}: {e}")
+    except Exception as e:
+        raise RuntimeError(f"Cannot read config file {config_file}: {e}")
 
     return cfg
 
