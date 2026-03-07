@@ -11,10 +11,10 @@ from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from transformers import RTDetrV2ForObjectDetection, RTDetrImageProcessor
-from signboard_det.RTDETRv2.src.core.yaml_config import YAMLConfig
-from signboard_det.RTDETRv2.src.optim.warmup import LinearWarmup
-from signboard_det.RTDETRv2.src.data.dataloader import BatchImageCollateFunction
-from signboard_det.RTDETRv2.src.nn.postprocessor.detr_postprocessor import DetDETRPostProcessor
+from signboard_det.RTDETRv2.core.yaml_config import YAMLConfig
+from signboard_det.RTDETRv2.optim.warmup import LinearWarmup
+from signboard_det.RTDETRv2.data.dataloader import BatchImageCollateFunction
+from signboard_det.RTDETRv2.nn.postprocessor.detr_postprocessor import DetDETRPostProcessor
 from .dataset import SignboardDetection
 from .metrics import bounding_boxes, calculate_mAP
 from .infer import inference
