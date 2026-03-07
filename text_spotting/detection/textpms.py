@@ -15,7 +15,8 @@ from text_spotting.detection.TextPMs.network.loss import TextLoss
 from .dataset import SignboardText
 import argparse
 from torch.utils.data import DataLoader
-from utils import set_seed, rescale_box, save_output_txt, prepare_file_to_evaluate
+from utils.utility import set_seed, save_output_txt, prepare_file_to_evaluate
+from utils.transforms import rescale_box
 import numpy as np
 import cv2
 from tqdm import tqdm

@@ -24,7 +24,8 @@ import math
 import torch.nn as nn
 from torch.optim.lr_scheduler import _LRScheduler
 from .dataset import SignboardText
-from utils import set_seed, rescale_box, save_output_txt, prepare_file_to_evaluate, parse_yaml
+from utils.utility import set_seed, save_output_txt, prepare_file_to_evaluate, parse_yaml
+from utils.transforms import rescale_box
 import numpy as np
 import cv2
 from tqdm import tqdm

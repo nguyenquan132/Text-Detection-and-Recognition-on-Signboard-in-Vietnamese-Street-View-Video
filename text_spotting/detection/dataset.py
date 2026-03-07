@@ -7,7 +7,7 @@ import json
 import cv2
 import numpy as np
 from text_spotting.detection.TextPMs.util.instance import TextInstance, make_text_region
-from utils import check_and_refine_valid_box
+from utils.transforms import check_and_refine_valid_box
 
 class SignboardText(Dataset):
     def __init__(self, rootDir, label, transforms=None, is_training=True, 

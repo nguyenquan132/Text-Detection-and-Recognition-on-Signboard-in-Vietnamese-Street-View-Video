@@ -14,7 +14,7 @@ from text_spotting.recognition.OpenOCR.openrec.postprocess import build_post_pro
 from text_spotting.recognition.OpenOCR.openrec.losses import build_loss
 from text_spotting.recognition.OpenOCR.data.ratio_sample import RatioSampler
 from .dataset import SignboardText
-from utils import set_seed
+from utils.utility import set_seed
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from pathlib import Path
