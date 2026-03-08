@@ -56,6 +56,13 @@ python3 -m signboard_det.rtdetrv2 -mode train -epochs 100 -size 640
 ```
 > 💡 To enable experiment tracking, set your WANDB_API_KEY before running the training script.
 
+## 🤖 End-to-End Pipeline for Video Inference
+To run the end-to-end inference pipeline on a video, use the following command:
+
+```bash
+python3 -m demo_video -video_path "" -best_rtdetrv2_path "" -best_yolov8_obb_path ""  -best_parseq_path "" -signboard_threshold 0.1
+```
+
 ## Signboard Detection
 Due to the domain gap between standard object detection datasets and real-world Vietnamese street scenes, all models are fine-tuned on our dataset. The models are grouped into three categories based on their output representation: **axis-aligned bounding boxes**, **oriented bounding boxes (OBB)**, and **polygon-based segmentation**. This categorization allows systematic evaluation of different approaches for signboard detection in complex urban environments.
 ### Fine-tuned Models with Axis-Aligned Bounding Boxes
