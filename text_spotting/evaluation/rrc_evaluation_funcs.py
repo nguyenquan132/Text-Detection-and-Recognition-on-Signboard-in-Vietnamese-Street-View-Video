@@ -308,8 +308,6 @@ def main_evaluation(args,default_evaluation_params_fn,validate_data_fn,evaluate_
     evalParams['WORD_SPOTTING'] = args.word_spotting
     evalParams['NORM_36_CHAR'] = args.norm_36_char
     evalParams['CASE'] = args.case
-    evalParams['AREA_RECALL_CONSTRAINT'] = args.iou_threshold
-    evalParams['AREA_PRECISION_CONSTRAINT'] = args.iou_threshold
     evalParams['CONFIDENCES'] = args.conf
     evalParams['TRANSCRIPTION'] = args.trans
     # if 'p' in p.keys():
@@ -382,8 +380,6 @@ def main_validation(args, default_evaluation_params_fn,validate_data_fn):
     evalParams['WORD_SPOTTING'] = args.word_spotting
     evalParams['NORM'] = args.norm_36_char
     evalParams['CASE'] = args.case
-    evalParams['AREA_RECALL_CONSTRAINT'] = args.iou_threshold
-    evalParams['AREA_PRECISION_CONSTRAINT'] = args.iou_threshold
     evalParams['CONFIDENCES'] = args.conf
     evalParams['TRANSCRIPTION'] = args.trans
 
