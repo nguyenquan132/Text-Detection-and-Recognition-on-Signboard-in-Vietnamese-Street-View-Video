@@ -113,7 +113,7 @@ class DETRFinetuner(pl.LightningModule):
         filtered_result = filter_bboxes(results, threshold)
         if original_size is not None: 
             current_size = pixel_values.shape[2:]
-            filtered_result['bboxes'] = scale_boxes(current_size, filtered_result['bboxes'], target_size)
+            filtered_result['bboxes'] = scale_boxes(current_size, filtered_result['bboxes'], original_size)
 
         return filtered_result
         
