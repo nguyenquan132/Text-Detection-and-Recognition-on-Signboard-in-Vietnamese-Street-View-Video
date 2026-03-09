@@ -143,7 +143,9 @@ def filter_bboxes(outputs, current_size, target_size, threshold=0.25):
     if target_size is not None: 
         assert len(target_size) == 2 #(H, W)
         # Rescale resized box to original box
-        bboxes = scale_boxes(current_size, bboxes, target_size)
+        target_size = target_size.repeat(1, 2)
+        current_size = current_size.repeat(1, 2)
+        bboxes = bboxes * (target_size / current_size)
 
     return {'scores': scores_keep, 'labels': labels_keep, 'bboxes': bboxes}
 
