@@ -13,6 +13,7 @@ from signboard_det.DETR.util.misc import collate_fn
 from signboard_det.DETR.postprocess import PostProcess
 from .dataset import SignboardDetection
 from .metrics import bounding_boxes, calculate_mAP
+from .inference import inference
 from signboard_det.evaluation.BoundingBoxes import BoundingBoxes
 from signboard_det.evaluation.Evaluator import *
 from utils.utility import set_seed
@@ -233,9 +234,9 @@ def test(val_transforms, best_model_path, device='cpu', seed=42):
                                                     id2label=id2label,
                                                     label2id=label2id,
                                                     postprocess=postprocess)
-    best_model.to(device)
     # start testing
     best_model.eval()
+    best_model.to(device)
     allBoundingBoxes = BoundingBoxes()
     evaluator = Evaluator()
     for i, image in enumerate(tqdm(test_dataloader)): 
@@ -279,8 +280,19 @@ if __name__ == '__main__':
         max_epochs = args.epochs
         train(train_transforms, val_transforms, label2id=label2id, id2label=id2label, 
               max_epochs=max_epochs, device=device)
-    if args.mode == 'test': 
+    elif args.mode == 'test': 
         best_model_path = args.best_model_path
         assert best_model_path is not None
         test(val_transforms, best_model_path=best_model_path, device=device)
-    
+    elif args.mode == 'inferece':
+        best_model_path = args.best_model_path
+        image_path = args.image_path
+        assert best_model_path is not None
+        assert image_path is not None
+        # initialize postprocess and load best model
+        postprocess = PostProcess()
+        best_model = DETRFinetuner.load_from_checkpoint(best_model_path,
+                                                        id2label=id2label,
+                                                        label2id=label2id,
+                                                        postprocess=postprocess)
+        inference(best_model, image_path, val_transforms, device=device, threshold=0.5)

@@ -9,12 +9,12 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from transformers import SegformerForSemanticSegmentation, SegformerFeatureExtractor, get_cosine_schedule_with_warmup
 from .dataset import SignboardSegmentation
+from .inference import inference
 from utils.utility import set_seed
-from PIL import Image
+import albumentations as A
 import evaluate 
 import numpy as np
 import re
-import albumentations as A
 import argparse
 import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
@@ -78,9 +78,26 @@ class SegformerFinetuner(pl.LightningModule):
         self.test_step_outputs = []
         self.max_epochs = max_epochs
         
-    def forward(self, images, masks):
+    def forward(self, images, masks=None):
         outputs = self.model(pixel_values=images, labels=masks)
         return(outputs)
+    
+    def predict_one_image(self, images, target_size): 
+        assert len(target_size) == 2
+        images = images.to(self.device)
+        with torch.inference_mode(): 
+            outputs = self.model(images)
+
+            logits = outputs[0]
+            upsampled_logits = nn.functional.interpolate(
+                logits,
+                size=target_size,
+                mode="bilinear",
+                align_corners=False
+            )
+            predicted_mask = upsampled_logits.argmax(dim=1).cpu().numpy()
+
+        return predicted_mask
     
     def training_step(self, batch, batch_nb):
         
@@ -350,4 +367,13 @@ if __name__ == "__main__":
         assert best_model_path is not None
         test(val_transforms, feature_extractor=feature_extractor, 
              best_model_path=best_model_path, id2label=id2label, device=device)
+    elif args.mode == 'inference': 
+        best_model_path = args.best_model_path
+        image_path = args.image_path
+        assert best_model_path is not None
+        assert image_path is not None
+        # initialize postprocess and load best model
+        best_model = SegformerFinetuner.load_from_checkpoint(best_model_path,
+                                                             id2label=id2label)
+        inference(best_model, image_path, val_transforms, feature_extractor, mask=True, device=device)
     

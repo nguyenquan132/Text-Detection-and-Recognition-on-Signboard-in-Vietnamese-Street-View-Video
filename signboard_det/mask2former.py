@@ -1,3 +1,4 @@
+import os
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -8,15 +9,14 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from transformers import Mask2FormerForUniversalSegmentation, Mask2FormerImageProcessor, get_cosine_schedule_with_warmup
 from .dataset import SignboardSegmentation
+from .inference import inference
 from utils.utility import set_seed
-from PIL import Image
+import albumentations as A
 import evaluate 
 import numpy as np
 import re
-import albumentations as A
 import argparse
 import warnings
-import os
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 os.environ["WANDB_API_KEY"] = "YOUR API KEY"
 
@@ -121,15 +121,43 @@ class Mask2FormerFinetuner(pl.LightningModule):
         self.validation_step_outputs = []
         self.test_step_outputs = []
         
-    def forward(self, images, pixel_mask, mask_labels, class_labels):
-        device = images.device
-        mask_labels = [mask_label.to(device) for mask_label in mask_labels]
-        class_labels = [class_label.to(device) for class_label in class_labels]
+    def forward(self, images, pixel_mask=None, mask_labels=None, class_labels=None):
+        if mask_labels is not None: 
+            mask_labels = [mask_label.to(self.device) for mask_label in mask_labels]
+        if class_labels is not None: 
+            class_labels = [class_label.to(self.device) for class_label in class_labels]
         outputs = self.model(pixel_values=images,
                              mask_labels=mask_labels,
                              class_labels=class_labels,
                              pixel_mask=pixel_mask)
         return(outputs)
+    
+    def predict_one_image(self, images, target_size): 
+        assert len(target_size) == 2
+        images = images.to(self.device)
+        with torch.inference_mode(): 
+            outputs = self.model(images)
+
+            class_queries_logits = outputs.class_queries_logits  # [batch_size, num_queries, num_classes+1]
+            masks_queries_logits = outputs.masks_queries_logits  # [batch_size, num_queries, height, width]
+            
+            # Remove the null class `[..., :-1]
+            masks_classes = class_queries_logits.softmax(dim=-1)[..., :-1]
+            masks_probs = masks_queries_logits.sigmoid()
+            
+            # Semantic segmentation logits of shape (batch_size, num_classes, height, width)
+            segmentation = torch.einsum("bqc, bqhw -> bchw", masks_classes, masks_probs)
+            
+            upsampled_logits = nn.functional.interpolate(
+                segmentation, 
+                size=target_size, 
+                mode="bilinear", 
+                align_corners=False
+            )
+            
+            predicted_mask = upsampled_logits.argmax(dim=1).cpu().numpy()
+
+        return predicted_mask
     
     def training_step(self, batch, batch_nb):
         
@@ -436,4 +464,13 @@ if __name__ == "__main__":
         assert best_model_path is not None
         test(val_transforms, feature_extractor=feature_extractor, 
              best_model_path=best_model_path, id2label=id2label, device=device)
+    elif args.mode == 'inference': 
+        best_model_path = args.best_model_path
+        image_path = args.image_path
+        assert best_model_path is not None
+        assert image_path is not None
+        # initialize postprocess and load best model
+        best_model = Mask2FormerFinetuner.load_from_checkpoint(best_model_path,
+                                                               id2label=id2label)
+        inference(best_model, image_path, val_transforms, feature_extractor, mask=True, device=device)
     
