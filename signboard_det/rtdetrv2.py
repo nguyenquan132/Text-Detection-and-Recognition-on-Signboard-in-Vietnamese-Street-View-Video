@@ -419,7 +419,7 @@ if __name__ == '__main__':
         best_model_path = args.best_model_path
         assert best_model_path is not None
         test(val_transforms, best_model_path=best_model_path, device=device)
-    elif args.mode == 'inferece':
+    elif args.mode == 'infer':
         best_model_path = args.best_model_path
         image_path = args.image_path
         assert best_model_path is not None

@@ -464,7 +464,7 @@ if __name__ == "__main__":
         assert best_model_path is not None
         test(val_transforms, feature_extractor=feature_extractor, 
              best_model_path=best_model_path, id2label=id2label, device=device)
-    elif args.mode == 'inference': 
+    elif args.mode == 'infer':
         best_model_path = args.best_model_path
         image_path = args.image_path
         assert best_model_path is not None
