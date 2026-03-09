@@ -180,3 +180,25 @@ def check_and_refine_valid_box(box, image_size, min_width, min_height, box_forma
         return None  # Invalid bbox
 
     return [intersect_x1, intersect_y1, new_width, new_height]
+
+def check_and_refine_polygon(polygon, image_size, min_width=12, min_height=6):
+    """Validate và refine polygon"""
+    polygon = np.array(polygon, dtype=np.float32)
+    image_width, image_height = image_size
+    
+    # Check NaN
+    if np.isnan(polygon).any():
+        return None
+    
+    # Clip image bounds
+    polygon[:, 0] = np.clip(polygon[:, 0], 0, image_width - 1)
+    polygon[:, 1] = np.clip(polygon[:, 1], 0, image_height - 1)
+    
+    # Check size
+    width = polygon[:, 0].max() - polygon[:, 0].min()
+    height = polygon[:, 1].max() - polygon[:, 1].min()
+
+    if width < min_width or height < min_height:
+        return None
+    
+    return polygon
