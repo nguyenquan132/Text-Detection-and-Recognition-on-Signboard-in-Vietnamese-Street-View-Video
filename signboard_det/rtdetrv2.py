@@ -219,8 +219,6 @@ class RTDETRV2Finetuner(pl.LightningModule):
 
         # Postprocessing
         target_size = torch.tensor(pixel_values.shape[2:]).to(self.device) # Resized image
-        if original_size is not None: 
-            original_size = torch.tensor(original_size).to(self.device)
         output = {k: v for k, v in outputs.items()}
         output['pred_logits'] = output.pop('logits')
         results = self.postprocess(output)[0]
@@ -230,8 +228,16 @@ class RTDETRV2Finetuner(pl.LightningModule):
         scale_fct = torch.stack([img_w, img_h, img_w, img_h], dim=0).to(self.device)
         results['boxes'] = results['boxes'] * scale_fct
         current_size = target_size
+        
+        filtered_result = filter_bboxes(results, threshold)
+        # Rescale resized box to original box
+        if original_size is not None: 
+            original_size = torch.tensor(original_size).to(self.device)
+            target_size = target_size.repeat(1, 2)
+            current_size = current_size.repeat(1, 2)
+            filtered_result['bboxes'] = filtered_result['bboxes'] * (target_size / current_size)
 
-        return filter_bboxes(results, current_size, original_size, threshold)
+        return filtered_result
         
     def compute_loss(self, batch, batch_idx): 
         pixel_values = batch[0]
