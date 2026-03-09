@@ -209,7 +209,7 @@ class RTDETRV2Finetuner(pl.LightningModule):
         return outputs
 
     def predict_one_image(self, pixel_values, pixel_mask=None, 
-                          original_size=None, threshold=0.25, denormalize=False): 
+                          original_size=None, threshold=0.25): 
         assert len(pixel_values.shape) == 4 #(B, C, H, W)
         if pixel_mask is None:
             pixel_mask = torch.ones((1, pixel_values.shape[-2], pixel_values.shape[-1]))
@@ -223,10 +223,10 @@ class RTDETRV2Finetuner(pl.LightningModule):
         output['pred_logits'] = output.pop('logits')
         results = self.postprocess(output)[0]
         
-        if denormalize: 
-            img_h, img_w = target_size.unbind(0)
-            scale_fct = torch.stack([img_w, img_h, img_w, img_h], dim=0)
-            results['boxes'] = results['boxes'] * scale_fct
+        # denormalize bbox
+        img_h, img_w = target_size.unbind(0)
+        scale_fct = torch.stack([img_w, img_h, img_w, img_h], dim=0).to(self.device)
+        results['boxes'] = results['boxes'] * scale_fct
 
         return filter_bboxes(results, pixel_values.shape[2:], original_size, threshold)
         
@@ -379,7 +379,7 @@ def test(val_transforms, best_model_path, device='cpu', seed=42):
     for i, image in enumerate(tqdm(test_dataloader)): 
         gt = image[1][0]
         pixel_values = image[0]
-        results = best_model.predict_one_image(pixel_values, denormalize=True)
+        results = best_model.predict_one_image(pixel_values)
         bounding_boxes(allBoundingBoxes , i + 1, 
                        gt, results, current_gtbox_format='yolo', current_predbox_format='xyxy')
     
@@ -405,8 +405,8 @@ def inference(model, image_path, transforms, device='cpu', threshold=0.5, seed=4
     model.eval() 
     model = model.to(device)
     results = model.predict_one_image(pixel_values.unsqueeze(dim=0), 
-                                      threshold=threshold,
-                                      denormalize=True)
+                                      original_size=image.shape[:2],
+                                      threshold=threshold)
     # annotate image
     show_image = image.copy()
     for obj in range(len(results['labels'])):
