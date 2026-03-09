@@ -105,12 +105,13 @@ class DETRFinetuner(pl.LightningModule):
                            pixel_mask=pixel_mask.to(self.device))
 
         # Postprocessing
-        target_sizes = torch.tensor(pixel_values.shape[2:]).to(self.device) # Resized image
+        target_size = torch.tensor(pixel_values.shape[2:]).to(self.device) # Resized image
         output = {k: v for k, v in outputs.items()}
         output['pred_logits'] = output.pop('logits')
-        results = self.postprocess(output, target_sizes.unsqueeze(dim=0))[0]
+        results = self.postprocess(output, target_size.unsqueeze(dim=0))[0]
+        current_size = target_size
 
-        return filter_bboxes(results, pixel_values.shape[2:], original_size, threshold)
+        return filter_bboxes(results, current_size, original_size, threshold)
         
     def compute_loss(self, batch, batch_idx): 
         pixel_values, pixel_mask = batch[0].decompose() 
