@@ -229,8 +229,9 @@ class RTDETRV2Finetuner(pl.LightningModule):
         img_h, img_w = target_size.unbind(0)
         scale_fct = torch.stack([img_w, img_h, img_w, img_h], dim=0).to(self.device)
         results['boxes'] = results['boxes'] * scale_fct
+        current_size = target_size
 
-        return filter_bboxes(results, pixel_values.shape[2:], original_size, threshold)
+        return filter_bboxes(results, current_size, original_size, threshold)
         
     def compute_loss(self, batch, batch_idx): 
         pixel_values = batch[0]
