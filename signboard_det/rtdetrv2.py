@@ -220,7 +220,7 @@ class RTDETRV2Finetuner(pl.LightningModule):
         # Postprocessing
         target_size = torch.tensor(pixel_values.shape[2:]).to(self.device) # Resized image
         if original_size is not None: 
-            original_size = torch.tensor(original_size)
+            original_size = torch.tensor(original_size).to(self.device)
         output = {k: v for k, v in outputs.items()}
         output['pred_logits'] = output.pop('logits')
         results = self.postprocess(output)[0]
