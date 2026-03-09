@@ -227,15 +227,14 @@ class RTDETRV2Finetuner(pl.LightningModule):
         img_h, img_w = target_size.unbind(0)
         scale_fct = torch.stack([img_w, img_h, img_w, img_h], dim=0).to(self.device)
         results['boxes'] = results['boxes'] * scale_fct
-        current_size = target_size
         
         filtered_result = filter_bboxes(results, threshold)
         # Rescale resized box to original box
         if original_size is not None: 
             original_size = torch.tensor(original_size).to(self.device)
-            target_size = target_size.repeat(1, 2)
-            current_size = current_size.repeat(1, 2)
-            filtered_result['bboxes'] = filtered_result['bboxes'] * (target_size / current_size)
+            original_size = original_size.repeat(1, 2)
+            current_size = target_size.repeat(1, 2)
+            filtered_result['bboxes'] = filtered_result['bboxes'] * (original_size / current_size)
 
         return filtered_result
         
