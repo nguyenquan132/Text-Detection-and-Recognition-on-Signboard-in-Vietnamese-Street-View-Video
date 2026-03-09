@@ -9,11 +9,12 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from transformers import SegformerForSemanticSegmentation, SegformerFeatureExtractor, get_cosine_schedule_with_warmup
 from .dataset import SignboardSegmentation
-from .inference import inference
+from utils.visualize import overlay
 from utils.utility import set_seed
 import albumentations as A
 import evaluate 
 import numpy as np
+import cv2
 import re
 import argparse
 import warnings
@@ -322,6 +323,28 @@ def test(val_transforms, feature_extractor, best_model_path, id2label, device='c
     )
     trainer.test(segformer_finetuner, ckpt_path=best_model_path)
 
+def inference(model, image_path, transforms, feature_extractor, device='cpu', seed=42):
+    set_seed(seed)
+    # read image
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # preprocess image
+    pixel_values = transforms(image=image)['image']
+    encoded_inputs = feature_extractor(pixel_values, return_tensors='pt')
+    for k, v in encoded_inputs.items(): 
+        encoded_inputs[k].squeeze_() 
+
+    pixel_values = encoded_inputs['pixel_values']
+    # Prediction
+    model.eval() 
+    model = model.to(device)
+    predicted_mask = model.predict_one_image(pixel_values.unsqueeze(dim=0),
+                                                target_size=image.shape[:2])
+    show_image = overlay(image, predicted_mask.squeeze(), (0, 255, 0), alpha=0.7)
+
+    # Save annotated image
+    cv2.imwrite('image_prediction.jpg', show_image)
+
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
     parser.add_argument('-mode', type=str, default='train', required=False, help='Operation mode: "train" for training the model, "test" for testing, or "infer" for inference')
@@ -375,5 +398,5 @@ if __name__ == "__main__":
         # initialize postprocess and load best model
         best_model = SegformerFinetuner.load_from_checkpoint(best_model_path,
                                                              id2label=id2label)
-        inference(best_model, image_path, val_transforms, feature_extractor, mask=True, device=device)
+        inference(best_model, image_path, val_transforms, feature_extractor, device=device)
     

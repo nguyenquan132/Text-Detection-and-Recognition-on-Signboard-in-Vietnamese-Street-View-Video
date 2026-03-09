@@ -13,14 +13,15 @@ from signboard_det.DETR.util.misc import collate_fn
 from signboard_det.DETR.postprocess import PostProcess
 from .dataset import SignboardDetection
 from .metrics import bounding_boxes, calculate_mAP
-from .inference import inference
 from signboard_det.evaluation.BoundingBoxes import BoundingBoxes
 from signboard_det.evaluation.Evaluator import *
-from utils.utility import set_seed
+from utils.visualize import draw_bounding_box
+from utils.utility import set_seed, calculate_font_scale
 from utils.transforms import filter_bboxes
 import albumentations as A
 from PIL import Image
 import numpy as np
+import cv2
 import argparse
 from tqdm import tqdm
 os.environ["WANDB_API_KEY"] = "YOUR API KEY"
@@ -257,6 +258,31 @@ def test(val_transforms, best_model_path, device='cpu', seed=42):
 
     print(f'mAP@50: {mAP_50*100:.2f}%')
     print(f'mAP@50-95: {np.mean(mAP_scores)*100:.2f}%') 
+
+def inference(model, image_path, transforms, device='cpu', threshold=0.5, seed=42):
+    set_seed(seed)
+    # read image
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # preprocess image
+    pixel_values, _ = transforms(image, target=None)
+    # Prediction
+    model.eval() 
+    model = model.to(device)
+    results = model.predict_one_image(pixel_values.unsqueeze(dim=0), 
+                                      original_size=image.shape[:2], 
+                                      threshold=threshold)
+    # annotate image
+    show_image = image.copy()
+    for obj in range(len(results['labels'])):
+        boxes = results['bboxes'][obj].detach().cpu().numpy()
+        class_id = results['labels'][obj].item() 
+        conf = results['scores'][obj].item() 
+        font_scale = round(calculate_font_scale(show_image), 2)
+        draw_bounding_box(show_image, boxes, class_id, conf, box_thickness=3, 
+                          text_thickness=3, text_scale=font_scale, format_box='xyxy', text_color=(0, 165, 255))
+    # Save annotated image
+    cv2.imwrite('image_prediction.jpg', show_image)
 
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser()
