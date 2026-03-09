@@ -29,14 +29,6 @@ wandb/
 runs/
 events.out.tfevents*
 
-# Dataset
-data/
-dataset/
-datasets/
-*.zip
-*.tar
-*.gz
-
 # Model checkpoints
 checkpoints/
 models/
