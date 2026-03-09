@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from .transforms import convert_box_format, normalize, denormalize
+from utils.transforms import convert_box_format, normalize, denormalize
 class_name_to_id_mapping = {'signboard': 0}
 class_id_to_name_mapping = {0: 'signboard'}
 
