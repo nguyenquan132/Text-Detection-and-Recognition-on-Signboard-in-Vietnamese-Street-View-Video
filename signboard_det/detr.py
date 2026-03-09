@@ -17,7 +17,7 @@ from signboard_det.evaluation.BoundingBoxes import BoundingBoxes
 from signboard_det.evaluation.Evaluator import *
 from utils.visualize import draw_bounding_box
 from utils.utility import set_seed, calculate_font_scale
-from utils.transforms import filter_bboxes
+from utils.transforms import filter_bboxes, scale_boxes
 import albumentations as A
 from PIL import Image
 import numpy as np
@@ -106,14 +106,16 @@ class DETRFinetuner(pl.LightningModule):
 
         # Postprocessing
         target_size = torch.tensor(pixel_values.shape[2:]).to(self.device) # Resized image
-        if original_size is not None: 
-            original_size = torch.tensor(original_size).to(self.device)
         output = {k: v for k, v in outputs.items()}
         output['pred_logits'] = output.pop('logits')
         results = self.postprocess(output, target_size.unsqueeze(dim=0))[0]
-        current_size = target_size
 
-        return filter_bboxes(results, current_size, original_size, threshold)
+        filtered_result = filter_bboxes(results, threshold)
+        if original_size is not None: 
+            current_size = pixel_values.shape[2:]
+            filtered_result['bboxes'] = scale_boxes(current_size, filtered_result['bboxes'], target_size)
+
+        return filtered_result
         
     def compute_loss(self, batch, batch_idx): 
         pixel_values, pixel_mask = batch[0].decompose() 
@@ -267,7 +269,7 @@ def inference(model, image_path, transforms, device='cpu', threshold=0.5, seed=4
     # read image
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    orig_size = Image.fromarray(image).size
+    orig_size = image.shape[:2]
     # preprocess image
     pixel_values, _ = transforms(image, target=None)
     # Prediction
