@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 from imantics import Mask
 
@@ -141,7 +142,8 @@ def filter_bboxes(outputs, current_size, target_size, threshold=0.25):
     bboxes = bboxes[keep]
 
     if target_size is not None: 
-        assert len(target_size) == 2 #(H, W)
+        assert isinstance(target_size, torch.Tensor)
+        assert len(target_size) == 2  # (H, W)
         # Rescale resized box to original box
         target_size = target_size.repeat(1, 2)
         current_size = current_size.repeat(1, 2)
