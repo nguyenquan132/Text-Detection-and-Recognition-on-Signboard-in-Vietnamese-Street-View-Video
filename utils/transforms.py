@@ -133,21 +133,13 @@ def scale_boxes(img1_shape, boxes, img0_shape, ratio_pad=None, padding: bool = T
     boxes[..., :4] /= gain
     return boxes
 
-def filter_bboxes(outputs, current_size, target_size, threshold=0.25): 
+def filter_bboxes(outputs, threshold=0.25): 
     scores, labels, bboxes = outputs['scores'], outputs['labels'], outputs['boxes']
     keep = scores > threshold 
 
     scores_keep = scores[keep]
     labels_keep = labels[keep]
-    bboxes = bboxes[keep]
-
-    if target_size is not None: 
-        assert isinstance(current_size, torch.Tensor) and isinstance(target_size, torch.Tensor)
-        assert len(current_size) == 2 and len(target_size) == 2
-        # Rescale resized box to original box
-        target_size = target_size.repeat(1, 2)
-        current_size = current_size.repeat(1, 2)
-        bboxes = bboxes * (target_size / current_size)
+    bboxes = bboxes[keep]  
 
     return {'scores': scores_keep, 'labels': labels_keep, 'bboxes': bboxes}
 
