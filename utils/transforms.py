@@ -1,5 +1,5 @@
 import numpy as np
-import torch
+from imantics import Mask
 
 def denormalize(image_width, image_height, boxes):
     """
@@ -147,6 +147,9 @@ def filter_bboxes(outputs, current_size, target_size, threshold=0.25):
 
     return {'scores': scores_keep, 'labels': labels_keep, 'bboxes': bboxes}
 
+def mask_to_polygons(mask: np.ndarray) -> list[np.ndarray]:
+    polygons = Mask(mask).polygons()
+    return polygons.points
 
 def check_and_refine_valid_box(box, image_size, min_width, min_height, box_format='xywh'):
     """
