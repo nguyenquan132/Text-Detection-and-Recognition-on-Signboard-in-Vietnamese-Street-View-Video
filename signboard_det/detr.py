@@ -267,13 +267,14 @@ def inference(model, image_path, transforms, device='cpu', threshold=0.5, seed=4
     # read image
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    orig_size = Image.fromarray(image).size
     # preprocess image
     pixel_values, _ = transforms(image, target=None)
     # Prediction
     model.eval() 
     model = model.to(device)
     results = model.predict_one_image(pixel_values.unsqueeze(dim=0), 
-                                      original_size=image.shape[:2], 
+                                      original_size=orig_size, 
                                       threshold=threshold)
     # annotate image
     show_image = image.copy()
