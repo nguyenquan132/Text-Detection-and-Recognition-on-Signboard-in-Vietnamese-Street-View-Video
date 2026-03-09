@@ -405,8 +405,8 @@ def inference(model, image_path, transforms, device='cpu', threshold=0.5, seed=4
     model.eval() 
     model = model.to(device)
     results = model.predict_one_image(pixel_values.unsqueeze(dim=0), 
-                                      original_size=image.shape[:2], 
-                                      threshold=threshold)
+                                      threshold=threshold,
+                                      denormalize=True)
     # annotate image
     show_image = image.copy()
     for obj in range(len(results['labels'])):
@@ -426,6 +426,7 @@ if __name__ == '__main__':
     parser.add_argument('-epochs', type=int, default=100, required=False, help='Number of training epochs')
     parser.add_argument('-size', type=int, default=640, required=False, help='Input image size (images will be resized to size x size)')
     parser.add_argument('-image_path', type=str, default=None, required=False, help='Path to a single image for inference')
+    parser.add_argument('-threshold', type=float, default=0.5, required=False, help='Confidence threshold used to filter detected signboard regions')
     args = parser.parse_args()
     # initialize object
     label2id = {'signboard': 0}
@@ -448,6 +449,7 @@ if __name__ == '__main__':
     elif args.mode == 'infer':
         best_model_path = args.best_model_path
         image_path = args.image_path
+        threshold = args.threshold
         assert best_model_path is not None
         assert image_path is not None
         # initialize postprocess and load best model
@@ -456,4 +458,4 @@ if __name__ == '__main__':
                                                             id2label=id2label,
                                                             label2id=label2id,
                                                             postprocess=postprocess)
-        inference(best_model, image_path, val_transforms, device=device, threshold=0.5)
+        inference(best_model, image_path, val_transforms, device=device, threshold=threshold)
